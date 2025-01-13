@@ -1,0 +1,47 @@
+ <script>
+     let result = document.getElementById("result");
+     let searchBtn = document.getElementById("search-btn");
+     let cityRef = document.getElementById("city");
+
+     // Your API key
+     let key = "2ebe75e4ac6e9bfe0347cb4ec9f4d669";
+
+     let getWeather = () => {
+         let cityValue = cityRef.value.trim(); // Trim to remove extra spaces
+         if (cityValue.length === 0) {
+             result.innerHTML = `<h3 class="error">Please enter a city name</h3>`;
+         } else {
+             let url = `https://api.openweathermap.org/data/2.5/weather?q=${cityValue}&appid=${key}&units=metric`;
+             cityRef.value = ""; // Clear the input field
+             fetch(url)
+                 .then((resp) => resp.json())
+                 .then((data) => {
+                     if (data.cod === 200) { // Successful response
+                         result.innerHTML = `
+                             <h2>${data.name}</h2>
+                             <h4 class="weather">${data.weather[0].main}</h4>
+                             <h4 class="desc">${data.weather[0].description}</h4>
+                             <img src="https://openweathermap.org/img/w/${data.weather[0].icon}.png" alt="Weather icon">
+                             <h1>${data.main.temp} &#176;C</h1>
+                             <div class="temp-container">
+                                 <div>
+                                     <h4 class="title">Min</h4>
+                                     <h4 class="temp">${data.main.temp_min}&#176;C</h4>
+                                 </div>
+                                 <div>
+                                     <h4 class="title">Max</h4>
+                                     <h4 class="temp">${data.main.temp_max}&#176;C</h4>
+                                 </div>
+                             </div>`;
+                     } else {
+                         result.innerHTML = `<h3 class="error">City not found</h3>`;
+                     }
+                 })
+                 .catch(() => {
+                     result.innerHTML = `<h3 class="error">Something went wrong. Please try again later.</h3>`;
+                 });
+         }
+     };
+
+     searchBtn.addEventListener("click", getWeather);
+ </script>
